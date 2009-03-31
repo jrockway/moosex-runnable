@@ -13,6 +13,8 @@ sub run {
     unshift @INC, $_ for @$includes;
     help() unless $app;
 
+    local $0 = "mx-run ... $app";
+
     return MooseX::Runnable::Invocation->new(
         class   => $app,
         plugins => $plugins || [],
