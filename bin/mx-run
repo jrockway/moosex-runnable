@@ -1,0 +1,13 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use MooseX::Runnable::Run;
+&run_application(@ARGV); # the prototype is ($app, @args), but that's what ARGV is
+
+__END__
+
+=head1 NAME
+
+mx-run - script to run MooseX::Runnable classes

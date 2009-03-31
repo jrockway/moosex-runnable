@@ -8,4 +8,6 @@ build_requires 'Test::WWW::Mechanize::Catalyst';
 build_requires 'Test::More';
 build_requires 'ok';
 
+install_script 'bin/mx-run';
+
 WriteAll();
