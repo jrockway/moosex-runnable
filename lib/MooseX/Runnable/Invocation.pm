@@ -71,6 +71,23 @@ sub apply_scheme {
     }
 }
 
+
+sub _convert_role_to_scheme {
+    my ($self, $role) = @_;
+
+    my $name = $role->name;
+    return if $name =~ /\|/;
+    $name = "MooseX::Runnable::Invocation::Scheme::$name";
+
+    return eval {
+        Class::MOP::load_class($name);
+        warn "$name was loaded OK, but it's not a role!" and return
+          unless $name->meta->isa('Moose::Meta::Role');
+        return $name->meta;
+    };
+}
+
+
 sub validate_class {
     my ($self, $class) = @_;
 
@@ -89,14 +106,6 @@ sub validate_class {
            if @bad_attributes;
 
     return; # return value is meaningless
-}
-
-sub _convert_role_to_scheme {
-    my ($self, $role) = @_;
-
-    my $name =
-
-    return;
 }
 
 sub create_instance {
