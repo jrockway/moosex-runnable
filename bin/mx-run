@@ -3,8 +3,74 @@
 use strict;
 use warnings;
 
-use MooseX::Runnable::Run;
-&run_application(@ARGV); # the prototype is ($app, @args), but that's what ARGV is
+use MooseX::Runnable::Run; # incidentally, we don't actually use this...
+
+exit run();
+
+sub run {
+    my ($includes, $plugins, $app, $argv) = parse_argv();
+
+    unshift @INC, $_ for @$includes;
+    help() unless $app;
+
+    return MooseX::Runnable::Invocation->new(
+        class   => $app,
+        plugins => $plugins || [],
+    )->run(@$argv);
+}
+
+sub parse_argv {
+    # we need to parse "incrementally" so we can identify:
+    # - our args (-Ilib, and --help, -h, and -?)
+    # - plugins to load (+Plugin)
+    # - the class name
+    # - the class' args
+    # code that's better than this is welcome!
+
+    my (@include, @plugins, $app);
+
+    while( my $arg = shift @ARGV ){
+        if ($arg =~ /^-I([^-]+)/){ # XXX: handle -I"quoted string" ?
+            push @include, $1;
+        }
+        elsif ($arg =~ /^\+\+?([A-Za-z:_]+)$/){ # second + is for +Foo::Bar
+            push @plugins, $1;
+        }
+        elsif ($arg =~ /^--([^-]+)$/){
+            help();
+        }
+        else {
+            if($arg =~ /^([A-Za-z:_]+)$/){
+                $app = $arg;
+                last;
+            }
+            else {
+                help();
+            }
+        }
+    }
+
+    return \@include, \@plugins, $app, \@ARGV;
+}
+
+sub help {
+    print <<'END';
+
+This is mx-run, a utility for running MooseX::Runnable classes.
+usage: mx-run <mx-run options> Class::Name <options for Class::Name>
+mx-run options:
+
+    --help -? -h     Print this message
+    +PluginName      Load PluginName (see MooseX::Runnable::Invocation)
+    -I<path>         Add <path> to @INC before loading Class::Name
+
+To get help for Class::Name, run:
+
+    mx-run Class::Name --help
+END
+
+    exit 1;
+}
 
 __END__
 
