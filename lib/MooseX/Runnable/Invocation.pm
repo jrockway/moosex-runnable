@@ -66,9 +66,11 @@ sub apply_scheme {
         $self->_convert_role_to_scheme($_)
     } $class->calculate_all_roles;
 
-    foreach my $scheme (@schemes) {
-        $scheme->apply($self);
-    }
+    eval {
+        foreach my $scheme (@schemes) {
+            $scheme->apply($self);
+        }
+    };
 }
 
 
