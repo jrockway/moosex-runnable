@@ -17,8 +17,6 @@ use namespace::clean -except => 'meta';
 # this class is just as runnable as any other, so I guess we should tag it
 with 'MooseX::Runnable', 'MooseX::Object::Pluggable';
 
-has '+_plugin_ns' => ( default => 'MooseX::Runnable::Invocation::Plugin' );
-
 has 'class' => (
     is       => 'ro',
     isa      => RunnableClass,
