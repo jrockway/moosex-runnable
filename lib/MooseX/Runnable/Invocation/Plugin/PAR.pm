@@ -47,7 +47,7 @@ $inc
 exit MooseX::Runnable::Invocation->new(
     class   => '$app',
     plugins => [$plugins],
-)->run(@ARGV);
+)->run(\@ARGV);
 END
 
     $app =~ s/::/_/g;
