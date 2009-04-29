@@ -1,7 +1,7 @@
 package MooseX::Runnable::Invocation;
 use Moose;
 use MooseX::Types -declare => ['RunnableClass'];
-use MooseX::Types::Moose qw(Str ClassName);
+use MooseX::Types::Moose qw(Str HashRef ArrayRef);
 use namespace::autoclean;
 
 require Class::MOP;
@@ -25,7 +25,7 @@ has 'class' => (
 
 has 'plugins' => (
     is         => 'ro',
-    isa        => 'ArrayRef[Str]',
+    isa        => HashRef[ArrayRef[Str]],
     default    => sub { [] },
     required   => 1,
     auto_deref => 1,
@@ -33,7 +33,7 @@ has 'plugins' => (
 
 sub BUILD {
     my $self = shift;
-    $self->load_plugin($_) for $self->plugins;
+    $self->load_plugin($_) for keys %{$self->plugins};
 }
 
 sub load_class {

@@ -27,7 +27,7 @@ sub run {
 
     return MooseX::Runnable::Invocation->new(
         class   => $app,
-        plugins => [ keys %{$args->plugins} ], # XXX: fixme
+        plugins => $args->plugins,
     )->run($args->app_args);
 }
 
