@@ -196,9 +196,13 @@ sub _build_app_args {
 
     my %plugins = %{ $self->plugins };
 
+  PLUGIN:
     for my $p (keys %plugins){
         my $vl = scalar @{ $plugins{$p} };
-        splice @args, (first_index { $_ eq "+$p" } @args), $vl + 1;
+        my $idx = first_index { $_ eq "+$p" } @args;
+        next PLUGIN if $idx == -1; # HORRIBLE API!
+
+        splice @args, $idx, $vl + 1;
     }
 
     if($args[0] eq '--'){

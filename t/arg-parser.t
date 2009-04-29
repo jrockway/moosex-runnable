@@ -17,6 +17,7 @@ use Test::TableDriven (
         '-Ilib +P --args --arehere +Q --more --args -Ilib -- Foo' => 'Foo',
         '+P --args -- Foo -- Bar' => 'Foo',
         '-Ilib +Debug -- PlanFinder' => 'PlanFinder',
+        '-Ilib -Iexample +Debug --prefix 42 -- MyApp' => 'MyApp',
     },
 
     modules => {
@@ -32,6 +33,7 @@ use Test::TableDriven (
         '-Ilib -MFoo OH::HAI' => ['Foo'],
         '-Ilib -MFoo +End -MBar -- OH::HAI' => ['Foo'],
         '-Ilib +Debug -- PlanFinder' => [],
+        '-Ilib -Iexample +Debug --prefix 42 -- MyApp' => [],
     },
 
     include_paths => {
@@ -47,6 +49,7 @@ use Test::TableDriven (
         '-Ilib -MFoo -I../../../../lib +End -IBar -- OH::HAI' =>
               ['lib', '../../../../lib'],
         '-Ilib +Debug -- PlanFinder' => ['lib'],
+        '-Ilib -Iexample +Debug --prefix 42 -- MyApp' => ['lib', 'example'],
     },
 
     plugins => {
@@ -56,36 +59,40 @@ use Test::TableDriven (
         '+One --arg +Two --arg2 -- End' => { One => ['--arg'], Two => ['--arg2'] },
         '+Debug +PAR +Foo::Bar -- Baz' => { Debug => [], PAR => [], 'Foo::Bar' => [] },
         '-Ilib +Debug -- PlanFinder' => { Debug => [] },
+        '++Foo -- Bar' => { '+Foo' => [] },
+        '-Ilib -Iexample +Debug --prefix 42 -- MyApp' => { Debug => [ '--prefix', '42' ] },
     },
 
     is_help => {
-        '--help'                     => 1,
-        '-h'                         => 1,
-        '-?'                         => 1,
-        '--?'                        => 0,
-        '--h'                        => 0,
-        '+Foo --help'                => 0,
-        'Foo'                        => 0,
-        '-Ilib -MFoo --help'         => 1,
-        '-- Foo --help'              => 0,
-        'Foo --help'                 => 0,
-        'Foo -?'                     => 0,
-        'Foo -h'                     => 0,
+        '--help' => 1,
+        '-h' => 1,
+        '-?' => 1,
+        '--?' => 0,
+        '--h' => 0,
+        '+Foo --help' => 0,
+        'Foo' => 0,
+        '-Ilib -MFoo --help' => 1,
+        '-- Foo --help' => 0,
+        'Foo --help' => 0,
+        'Foo -?' => 0,
+        'Foo -h' => 0,
         '-Ilib +Debug -- PlanFinder' => 0,
+        '-Ilib -Iexample +Debug --prefix 42 -- MyApp' => 0,
     },
 
     app_args => {
-        'Foo'                        => [],
-        '-Ilib Foo'                  => [],
-        '-Ilib -MFoo Bar'            => [],
-        'Foo Bar'                    => ['Bar'],
-        'Foo Bar Baz'                => ['Bar', 'Baz'],
-        '-- Foo Bar Baz'             => ['Bar', 'Baz'],
-        '-Ilib Foo -Ilib'            => ['-Ilib'],
-        '-MFoo Foo -MFoo'            => ['-MFoo'],
-        '-MFoo -MFoo Foo -MFoo'      => ['-MFoo'],
-        '-- Foo --help'              => ['--help'],
+        'Foo' => [],
+        '-Ilib Foo' => [],
+        '-Ilib -MFoo Bar' => [],
+        'Foo Bar' => ['Bar'],
+        'Foo Bar Baz' => ['Bar', 'Baz'],
+        '-- Foo Bar Baz' => ['Bar', 'Baz'],
+        '-Ilib Foo -Ilib' => ['-Ilib'],
+        '-MFoo Foo -MFoo' => ['-MFoo'],
+        '-MFoo -MFoo Foo -MFoo' => ['-MFoo'],
+        '-- Foo --help' => ['--help'],
         '-Ilib +Debug -- PlanFinder' => [],
+        '-Ilib -Iexample +Debug --prefix 42 -- MyApp' => [],
     },
 );
 
