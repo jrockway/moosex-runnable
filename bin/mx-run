@@ -3,81 +3,64 @@
 use strict;
 use warnings;
 
+use MooseX::Runnable::Util::ArgParser;
 use MooseX::Runnable::Run; # incidentally, we don't actually use this...
 
 exit run();
 
 sub run {
-    my ($includes, $plugins, $app, $argv) = parse_argv();
+    my $args = MooseX::Runnable::Util::ArgParser->new(
+        argv => \@ARGV,
+    );
 
-    unshift @INC, $_ for @$includes;
-    help() unless $app;
+    help() if $args->is_help;
 
+    # set @INC from -I...
+    unshift @INC, $_->stringify for $args->include_paths;
+
+    # load -M... modules
+    do { eval "require $_"; die $@ if $@ }
+      for $args->modules;
+
+    my $app = $args->class_name;
     local $0 = "mx-run ... $app";
 
     return MooseX::Runnable::Invocation->new(
         class   => $app,
-        plugins => $plugins || [],
-    )->run(@$argv);
-}
-
-sub parse_argv {
-    # we need to parse "incrementally" so we can identify:
-    # - our args (-Ilib, and --help, -h, and -?)
-    # - plugins to load (+Plugin)
-    # - the class name
-    # - the class' args
-    # code that's better than this is welcome!
-
-    my (@include, @plugins, $app);
-
-    while( my $arg = shift @ARGV ){
-        if ($arg =~ /^-I([^-]+)/){ # XXX: handle -I"quoted string" ?
-            push @include, $1;
-        }
-        elsif ($arg =~ /^-M([^-]+)/){
-            my $module = $1;
-            eval "use $module";
-            die $@ if $@;
-        }
-        elsif ($arg =~ /^\+\+?([A-Za-z:_]+)$/){ # second + is for +Foo::Bar
-            push @plugins, $1;
-        }
-        elsif ($arg =~ /^--([^-]+)$/){
-            help();
-        }
-        else {
-            if($arg =~ /^([A-Za-z:_]+)$/){
-                $app = $arg;
-                last;
-            }
-            else {
-                help();
-            }
-        }
-    }
-
-    return \@include, \@plugins, $app, \@ARGV;
+        plugins => [ keys %{$args->plugins} ], # XXX: fixme
+    )->run($args->app_args);
 }
 
 sub help {
     print <<'END';
 
 This is mx-run, a utility for running MooseX::Runnable classes.
-usage: mx-run <mx-run options> Class::Name <options for Class::Name>
+
+usage: mx-run <mx-run options> -- Class::Name <options for Class::Name>
+
 mx-run options:
 
     --help -? -h     Print this message
-    -I<path>         Add <path> to @INC before loading Class::Name
+    -I<path>         Add <path> to @INC before loading modules
     -M<module>       use <module> immediately
     +PluginName      Load PluginName (see MooseX::Runnable::Invocation)
 
-Note that as soon as +PluginName is seen, all -[IM] options are
-ignored by mx-run, and are instead processed by PluginName.
+Note that as soon as +PluginName is seen, all following -[IM] options
+are ignored by mx-run, and are instead processed by PluginName.  So
+put them at the very beginning.
+
+In the simplest cases, where you use only -I or -M (no plugins), you
+may omit the -- before the class name.
 
 To get help for Class::Name, run:
 
     mx-run Class::Name --help
+
+Syntax examples:
+
+    mx-run -Ilib Class::Name                          # Local Class::Name
+    mx-run -Ilib -MCarp::Always +Debug -- Class::Name # Debuggin
+
 END
 
     exit 1;
