@@ -26,7 +26,7 @@ has 'class' => (
 has 'plugins' => (
     is         => 'ro',
     isa        => HashRef[ArrayRef[Str]],
-    default    => sub { [] },
+    default    => sub { +{} },
     required   => 1,
     auto_deref => 1,
 );

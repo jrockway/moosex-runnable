@@ -44,7 +44,7 @@ is $code, 6, 'run worked';
 
 $invocation = MooseX::Runnable::Invocation->new(
     class   => 'Class',
-    plugins => ['+MooseX::Runnable::Invocation::Plugin::ExitFixer'],
+    plugins => {'+MooseX::Runnable::Invocation::Plugin::ExitFixer' => []},
 );
 
 ok $invocation;
