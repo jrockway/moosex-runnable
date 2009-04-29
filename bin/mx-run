@@ -59,7 +59,7 @@ To get help for Class::Name, run:
 Syntax examples:
 
     mx-run -Ilib Class::Name                          # Local Class::Name
-    mx-run -Ilib -MCarp::Always +Debug -- Class::Name # Debuggin
+    mx-run -Ilib -MCarp::Always +Debug -- Class::Name # Debugging
 
 END
 
