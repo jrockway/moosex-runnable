@@ -14,8 +14,8 @@ subtype RunnableClass,
   where { $_ =~ /^[:A-Za-z_]+$/ };
 
 
-# this class is just as runnable as any other, so I guess we should tag it
-with 'MooseX::Runnable', 'MooseX::Object::Pluggable';
+with 'MooseX::Runnable'; # this class technically follows
+                         # MX::Runnable's protocol
 
 has 'class' => (
     is       => 'ro',
@@ -33,7 +33,32 @@ has 'plugins' => (
 
 sub BUILD {
     my $self = shift;
-    $self->load_plugin($_) for keys %{$self->plugins};
+
+    # it would be nice to use MX::Object::Pluggable, but our plugins
+    # are too configurable
+
+    my $plugin_ns = 'MooseX::Runnable::Invocation::Plugin::';
+    for my $plugin (keys %{$self->plugins}){
+        my $orig = $plugin;
+        $plugin = "$plugin_ns$plugin" unless $plugin =~ /^[+]/;
+        $plugin =~ s/^[+]//g;
+
+        Class::MOP::load_class( $plugin );
+
+        my $args = eval {
+            $plugin->_build_initargs_from_cmdline(
+                @{$self->plugins->{$orig}},
+            );
+        };
+        if($@ && $plugin->can('_build_initargs_from_cmdline')){
+            confess "Error building initargs for $plugin: $@";
+        }
+
+        $plugin->meta->apply(
+            $self,
+            defined $args ? (rebless_params => $args) : (),
+        );
+    }
 }
 
 sub load_class {
