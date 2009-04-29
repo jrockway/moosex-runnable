@@ -5,7 +5,7 @@ all_from 'lib/MooseX/Runnable.pm';
 
 requires 'Moose';
 requires 'MooseX::Getopt'; # not really
-requires 'MooseX::Types' => 0.11;
+requires 'MooseX::Types' => '0.10';
 requires 'MooseX::Types::Path::Class';
 requires 'namespace::autoclean';
 requires 'List::MoreUtils';
