@@ -5,6 +5,8 @@ use Module::ScanDeps ();
 use App::Packer::PAR ();
 use MooseX::Runnable::Run;
 
+use Data::Dump::Streamer;
+
 use File::Temp qw(tempfile);
 
 my $mk_scanner = sub {
@@ -37,18 +39,24 @@ around run => sub {
     my $inc = join " ",
       map { "require '$_';\n" }
         keys %INC;
-    my $plugins = join ', ', map { "'$_'" } grep { $_ ne 'PAR' } @{$self->plugins};
+    my %plugins = %{ $self->plugins };
+    delete $plugins{PAR};
+    my $plugins = Dump(\%plugins)->Out;
+
     my $app = $self->class;
     my $script = <<"END";
 use MooseX::Runnable::Run;
 use MooseX::Runnable::Invocation;
 require Params::Validate; # XXX!
 $inc
+$plugins
 exit MooseX::Runnable::Invocation->new(
     class   => '$app',
-    plugins => [$plugins],
+    plugins => \$HASH1,
 )->run(\@ARGV);
 END
+
+    print "script: \n$script";
 
     $app =~ s/::/_/g;
     $app = lc $app;
