@@ -35,6 +35,11 @@ sub parse_argv {
         if ($arg =~ /^-I([^-]+)/){ # XXX: handle -I"quoted string" ?
             push @include, $1;
         }
+        elsif ($arg =~ /^-M([^-]+)/){
+            my $module = $1;
+            eval "use $module";
+            die $@ if $@;
+        }
         elsif ($arg =~ /^\+\+?([A-Za-z:_]+)$/){ # second + is for +Foo::Bar
             push @plugins, $1;
         }
@@ -63,8 +68,12 @@ usage: mx-run <mx-run options> Class::Name <options for Class::Name>
 mx-run options:
 
     --help -? -h     Print this message
-    +PluginName      Load PluginName (see MooseX::Runnable::Invocation)
     -I<path>         Add <path> to @INC before loading Class::Name
+    -M<module>       use <module> immediately
+    +PluginName      Load PluginName (see MooseX::Runnable::Invocation)
+
+Note that as soon as +PluginName is seen, all -[IM] options are
+ignored by mx-run, and are instead processed by PluginName.
 
 To get help for Class::Name, run:
 
