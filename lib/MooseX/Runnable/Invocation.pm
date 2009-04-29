@@ -87,12 +87,11 @@ sub _convert_role_to_scheme {
     };
 }
 
-
 sub validate_class {
     my ($self, $class) = @_;
 
     my @bad_attributes = map { $_->name } grep {
-        $_->is_required && $_->has_default || $_->has_builder
+        $_->is_required && !($_->has_default || $_->has_builder)
     } $class->get_all_attributes;
 
     confess
