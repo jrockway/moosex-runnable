@@ -16,6 +16,9 @@ around create_instance => sub {
     return ($instance, @$more_args);
 };
 
+# XXX: arounds that don't actually call $orig fuck up plugins.  i
+# think that's OK, mostly, but it's something to keep in mind...
+
 1;
 
 __END__
