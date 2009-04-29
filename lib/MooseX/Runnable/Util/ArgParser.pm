@@ -88,7 +88,7 @@ sub _build_class_name {
         confess 'Parse error: expecting --, got EOF';
     }
 
-    confess "Parse error: looking for ClassName, but can't find it";
+    confess "Parse error: looking for ClassName, but can't find it; perhaps you meant '--help' ?";
 }
 
 sub _look_for_dash_something($@) {
