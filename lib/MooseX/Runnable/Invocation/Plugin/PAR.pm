@@ -33,6 +33,7 @@ around run => sub {
         eval {
             # this is probably not possible, but we might as well try
             $self->validate_class($class);
+            $self->create_instance($class, @args);
         };
     }
 
