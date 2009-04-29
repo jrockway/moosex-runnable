@@ -2,6 +2,7 @@ package MooseX::Runnable::Invocation;
 use Moose;
 use MooseX::Types -declare => ['RunnableClass'];
 use MooseX::Types::Moose qw(Str ClassName);
+use namespace::autoclean;
 
 require Class::MOP;
 
@@ -12,7 +13,6 @@ subtype RunnableClass,
   as Str,
   where { $_ =~ /^[:A-Za-z_]+$/ };
 
-use namespace::clean -except => 'meta';
 
 # this class is just as runnable as any other, so I guess we should tag it
 with 'MooseX::Runnable', 'MooseX::Object::Pluggable';
