@@ -195,12 +195,12 @@ sub _build_app_args {
     _delete_first $_, @args for map { "-I$_" } $self->include_paths;
 
     my %plugins = %{ $self->plugins };
+
     for my $p (keys %plugins){
         my $vl = scalar @{ $plugins{$p} };
-        splice @args, first_index { $_ eq "+$p" } @args, $vl + 1;
+        splice @args, (first_index { $_ eq "+$p" } @args), $vl + 1;
     }
 
-    # sanity check
     if($args[0] eq '--'){
         shift @args;
     }
