@@ -1,6 +1,8 @@
 package MooseX::Runnable;
 use Moose::Role;
 
+our $VERSION = '0.00_01';
+
 requires 'run';
 
 1;
