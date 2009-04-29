@@ -93,7 +93,7 @@ sub validate_class {
 
     my @bad_attributes = map { $_->name } grep {
         $_->is_required && $_->has_default || $_->has_builder
-    } $class->compute_all_applicable_attributes;
+    } $class->get_all_attributes;
 
     confess
        'By default, MooseX::Runnable calls the constructor with no'.

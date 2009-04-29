@@ -17,3 +17,18 @@ around create_instance => sub {
 };
 
 1;
+
+__END__
+
+=head1 NAME
+
+MooseX::Runnable::Invocation::Scheme::MooseX::Getopt - run MX::Getopt classes
+
+=head1 DESCRIPTION
+
+This role will be used by C<MooseX::Runnable::Invocation> to create an
+instance of the class to be run with C<MooseX::Getopt>.  Any args not
+consumed by MX::Getopt will be passed to the class's run method.
+
+(See the test C<t/basic-mx-getopt.t> for an example.)
+

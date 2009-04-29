@@ -3,8 +3,12 @@ use inc::Module::Install;
 name 'MooseX-Runnable';
 all_from 'lib/MooseX/Runnable.pm';
 
-build_requires 'Catalyst::Runtime';
-build_requires 'Test::WWW::Mechanize::Catalyst';
+requires 'Moose';
+requires 'MooseX::Getopt'; # not really
+requires 'MooseX::Types' => 0.11;
+requires 'MooseX::Types::Path::Class';
+requires 'namespace::autoclean';
+
 build_requires 'Test::More';
 build_requires 'ok';
 

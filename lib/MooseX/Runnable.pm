@@ -23,7 +23,7 @@ Create a class, tag it runnable, and provide a C<run> method:
     sub run {
        my $name = shift;
        say "Hello, $name.";
-       return 0;
+       return 0; # success
     }
 
 Then you can run this class as an application with the included
