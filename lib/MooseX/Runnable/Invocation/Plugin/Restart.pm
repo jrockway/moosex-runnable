@@ -27,9 +27,25 @@ has 'restart_signal' => (
     default  => sub { 'HUP' },
 );
 
+sub _build_initargs_from_cmdline {
+    my ($class, @args) = @_;
+    confess 'Bad args passed to Restart plugin'
+      unless @args % 2 == 0;
+
+    my %args = @args;
+
+    my %res;
+    if(my $kill = $args{'--kill-signal'}){
+        $res{kill_signal} = $kill;
+    }
+    if(my $res = $args{'--restart-signal'}){
+        $res{restart_signal} = $res;
+    }
+    return \%res;
+}
+
 after '_restart_parent_setup' => sub {
     my $self = shift;
-
     my ($kw, $rw);
     $kw = AnyEvent->signal( signal => $self->kill_signal, cb => sub {
         $self->kill_child;
