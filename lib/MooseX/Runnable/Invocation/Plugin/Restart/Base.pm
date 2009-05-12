@@ -44,6 +44,14 @@ around 'run' => sub {
             # handle the case where the child dies unexpectedly
             waitpid $self->child_pid, 0;
             $self->clear_child_pid;
+            my ($code, $sig) = ($? >> 8, $? & 127);
+            eval { $self->_debug_message(
+                "Exiting early, child died with status $code (signal $sig).",
+            )};
+
+            # relay the error up, so the shell (etc.) can see it
+            kill $sig, $$ if $sig; # no-op?
+            exit $code;
         };
 
         # parent
@@ -71,12 +79,20 @@ around 'run' => sub {
                         kill 'KILL', $pid2;
                     };
                     waitpid $pid2, 0;
-                    $child_body->();
+                    my $code = $? >> 8;
+                    if($code == 0){
+                        goto $child_body;
+                    }
+                    else {
+                        eval { $self->_debug_message(
+                            "Child exited with non-zero status; aborting.",
+                        )};
+                        exit $code;
+                    }
                 }
                 else {
                     # child? actually do the work
                     exit $self->$next(@args);
-
                 }
             }
         };
