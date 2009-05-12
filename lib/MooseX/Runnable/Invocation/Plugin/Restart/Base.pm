@@ -40,7 +40,11 @@ around 'run' => sub {
     my ($next, $self, @args) = @_;
     my $pid = fork();
     if($pid){
-        local $SIG{CHLD} = 'IGNORE';
+        local $SIG{CHLD} = sub {
+            # handle the case where the child dies unexpectedly
+            waitpid $self->child_pid, 0;
+            $self->clear_child_pid;
+        };
 
         # parent
         $self->child_pid( $pid );
