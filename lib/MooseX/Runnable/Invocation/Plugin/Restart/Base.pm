@@ -10,6 +10,7 @@ has 'child_pid' => (
     predicate => 'has_child_pid',
 );
 
+# XXX: blocking is probably a bad idea; refactor this later
 requires 'run_parent_loop';
 
 my $is_debug = sub { return 1;
