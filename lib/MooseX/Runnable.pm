@@ -18,12 +18,13 @@ MooseX::Runnable - tag a class as a runnable application
 Create a class, tag it runnable, and provide a C<run> method:
 
     package App::HelloWorld;
+    use feature 'say';
     use Moose;
 
     with 'MooseX::Runnable';
 
     sub run {
-       my $name = shift;
+       my ($self,$name) = @_;
        say "Hello, $name.";
        return 0; # success
     }
