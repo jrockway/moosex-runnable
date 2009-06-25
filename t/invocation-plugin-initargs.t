@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::Exception;
-use Test::More tests => 4;
+use Test::More tests => 6;
 
 use MooseX::Runnable::Invocation;
 
@@ -26,6 +26,10 @@ my $initargs;
   }
 }
 
+{ package Argless;
+  use Moose::Role;
+}
+
 my $i;
 lives_ok {
     $i = MooseX::Runnable::Invocation->new(
@@ -40,5 +44,20 @@ ok $i, 'created invocation ok';
 ok $i->run, 'ran ok';
 is $initargs, 'foo,bar,baz', 'got initargs';
 
+throws_ok {
+    MooseX::Runnable::Invocation->new(
+        class => 'Class',
+        plugins => {
+            '+Argless' => ['args go here'],
+        },
+    );
+} qr/Perhaps/, 'argless + args = error';
 
-
+lives_ok {
+    MooseX::Runnable::Invocation->new(
+        class => 'Class',
+        plugins => {
+            '+Argless' => [],
+        },
+    );
+} 'argless + no args = ok';
