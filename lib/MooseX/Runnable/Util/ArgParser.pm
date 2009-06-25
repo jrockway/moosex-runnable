@@ -4,6 +4,8 @@ use MooseX::Types::Moose qw(HashRef ArrayRef Str Bool);
 use MooseX::Types::Path::Class qw(Dir);
 use List::MoreUtils qw(first_index);
 
+use FindBin;
+
 use namespace::autoclean -also => ['_look_for_dash_something', '_delete_first'];
 
 has 'argv' => (
@@ -218,6 +220,34 @@ sub _build_app_args {
     }
 
     return [@args];
+}
+
+# XXX: bad
+sub guess_cmdline {
+    my ($self, %opts) = @_;
+
+    confess 'Parser is help' if $self->is_help;
+
+    my @perl_flags = @{$opts{perl_flags} || []};
+    my @without_plugins = @{$opts{without_plugins} || []};
+
+    # invoke mx-run
+    my @cmdline = ($^X, @perl_flags, $FindBin::Bin.'/'.$FindBin::Script);
+    push @cmdline, map { "-I$_" } $self->include_paths;
+    push @cmdline, map { "-M$_" } $self->modules;
+
+  p:
+    for my $plugin (keys %{$self->plugins}){
+        for my $without (@without_plugins) {
+            next p if $without eq $plugin;
+        }
+        push @cmdline, "+$plugin", @{$self->plugins->{$plugin} || []};
+    }
+    push @cmdline, '--';
+    push @cmdline, $self->class_name;
+    push @cmdline, $self->app_args;
+
+    return @cmdline;
 }
 
 1;
