@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use MooseX::Runnable::Util::ArgParser;
-use MooseX::Runnable::Run; # incidentally, we don't actually use this...
+use MooseX::Runnable::Invocation::MxRun;
 
 exit run();
 
@@ -25,9 +25,10 @@ sub run {
     my $app = $args->class_name;
     local $0 = "mx-run ... $app";
 
-    return MooseX::Runnable::Invocation->new(
-        class   => $app,
-        plugins => $args->plugins,
+    return MooseX::Runnable::Invocation::MxRun->new(
+        class       => $app,
+        plugins     => $args->plugins,
+        parsed_args => $args,
     )->run($args->app_args);
 }
 
