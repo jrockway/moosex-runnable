@@ -45,13 +45,17 @@ sub BUILD {
 
         Class::MOP::load_class( $plugin );
 
-        my $args = eval {
-            $plugin->_build_initargs_from_cmdline(
-                @{$self->plugins->{$orig}},
-            );
-        };
-        if($@ && $plugin->can('_build_initargs_from_cmdline')){
-            confess "Error building initargs for $plugin: $@";
+        my $args;
+        if($plugin->meta->does_role('MooseX::Runnable::Invocation::Plugin::Role::CmdlineArgs')){
+            $args = eval {
+                $plugin->_build_initargs_from_cmdline(
+                    @{$self->plugins->{$orig}},
+                );
+            };
+
+            if($@) {
+                confess "Error building initargs for $plugin: $@";
+            }
         }
 
         $plugin->meta->apply(

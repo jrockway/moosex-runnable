@@ -1,6 +1,8 @@
 package MooseX::Runnable::Invocation::Plugin::Debug;
 use Moose::Role;
 
+with 'MooseX::Runnable::Invocation::Plugin::Role::CmdlineArgs';
+
 # this is an example to cargo-cult, rather than a useful feature :)
 has 'debug_prefix' => (
     is       => 'ro',

@@ -4,6 +4,7 @@ use MooseX::Types;
 use MooseX::Types::Moose qw(ArrayRef RegexpRef Any Str);
 use MooseX::Types::Path::Class qw(Dir);
 use File::ChangeNotify;
+use namespace::autoclean;
 
 # coerce ArrayRef[Dir], from ArrayRef[Any], via {[
 #     map { warn $_; Path::Class::dir($_) } @$_,
@@ -11,9 +12,9 @@ use File::ChangeNotify;
 
 coerce RegexpRef, from Str, via { qr/$_/i };
 
-use namespace::autoclean;
 
-with 'MooseX::Runnable::Invocation::Plugin::Restart::Base';
+with 'MooseX::Runnable::Invocation::Plugin::Restart::Base',
+  'MooseX::Runnable::Invocation::Plugin::Role::CmdlineArgs';
 
 has 'watch_regexp' => (
     is       => 'ro',
@@ -85,7 +86,6 @@ sub run_parent_loop {
     while(1){
         my @events = $self->watcher->wait_for_events();
         $self->restart;
-        sleep .5; # "debounce" the notifier
     }
 }
 

@@ -4,7 +4,8 @@ use MooseX::Types::Moose qw(Str);
 use AnyEvent;
 use namespace::autoclean;
 
-with 'MooseX::Runnable::Invocation::Plugin::Restart::Base';
+with 'MooseX::Runnable::Invocation::Plugin::Restart::Base',
+  'MooseX::Runnable::Invocation::Plugin::Role::CmdlineArgs';
 
 has 'completion_condvar' => (
     is       => 'ro',
