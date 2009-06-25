@@ -12,6 +12,14 @@ sub run_application($;@) {
     )->run(@args);
 }
 
+sub run_application_with_plugins($$;@){
+    my ($app, $plugins, @args) = @_;
+    exit MooseX::Runnable::Invocation->new(
+        class => $app,
+        plugins => $plugins,
+    )->run(@args);
+}
+
 sub import {
     my ($class, $app) = @_;
 
@@ -22,6 +30,7 @@ sub import {
         my $c = caller;
         no strict 'refs';
         *{ $c. '::run_application' } = \&run_application;
+        *{ $c. '::run_application_with_plugins' } = \&run_application_with_plugins;
     }
 }
 
