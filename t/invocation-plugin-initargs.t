@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::Exception;
-use Test::More tests => 6;
+use Test::More tests => 7;
 
 use MooseX::Runnable::Invocation;
 
@@ -28,6 +28,15 @@ my $initargs;
 
 { package Argless;
   use Moose::Role;
+}
+
+{ package Plugin2;
+  use Moose::Role;
+  with 'MooseX::Runnable::Invocation::Plugin::Role::CmdlineArgs';
+
+  sub _build_initargs_from_cmdline {
+      return { init => 'fails' };
+  }
 }
 
 my $i;
@@ -61,3 +70,13 @@ lives_ok {
         },
     );
 } 'argless + no args = ok';
+
+lives_ok {
+    MooseX::Runnable::Invocation->new(
+        class => 'Class',
+        plugins => {
+            '+Plugin' => [],
+            '+Plugin2' => [],
+        },
+    );
+} 'two plugins with args compose OK';
