@@ -232,7 +232,12 @@ sub guess_cmdline {
     my @without_plugins = @{$opts{without_plugins} || []};
 
     # invoke mx-run
-    my @cmdline = ($^X, @perl_flags, $FindBin::Bin.'/'.$FindBin::Script);
+    my @cmdline = (
+        $^X,
+        (map { "-I$_" } @INC),
+        @perl_flags,
+        $FindBin::Bin.'/'.$FindBin::Script,
+    );
     push @cmdline, map { "-I$_" } $self->include_paths;
     push @cmdline, map { "-M$_" } $self->modules;
 

@@ -13,11 +13,12 @@ my $args = MooseX::Runnable::Util::ArgParser->new(
 local $^X = '/path/to/perl';
 local $FindBin::Bin = '/path/to';
 local $FindBin::Script = 'mx-run';
+local @INC = ('foobar');
 my @cmdline = $args->guess_cmdline(
     perl_flags => ['--X--'],
     without_plugins => ['Plugout'],
 );
 
 is join(' ', @cmdline),
-  "/path/to/perl --X-- /path/to/mx-run -Ilib -MFoo -MBar +Plugin --with-args -- MyApp --with args",
+  "/path/to/perl -Ifoobar --X-- /path/to/mx-run -Ilib -MFoo -MBar +Plugin --with-args -- MyApp --with args",
   'cmdline reverses reasonably';
