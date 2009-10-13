@@ -1,7 +1,7 @@
 package MooseX::Runnable;
 use Moose::Role;
 
-our $VERSION = '0.00_02';
+our $VERSION = '0.01';
 
 requires 'run';
 
@@ -54,6 +54,13 @@ let's the computer abstract away some of the tedium this entails.
 
 =head1 REQUIRED METHODS
 
+=head2 run
+
+Your class must implement C<run>.  It accepts the commandline args
+(that were not consumed by another parser, if applicable) and returns
+an integer representing the UNIX exit value.  C<return 0> means
+success.
+
 =head1 THINGS YOU GET
 
 =head2 C<mx-run>
@@ -79,3 +86,35 @@ or:
 
 If you don't want to invoke your app with C<mx-run>, you can write a
 custom version using L<MooseX::Runnable::Run|MooseX::Runnable::Run>.
+
+=head1 ARCHITECTURE
+
+C<MX::Runnable> is designed to be extensible; users can run plugins
+from the command-line, and application developers can add roles to
+their class to control behavior.
+
+For example, if you consume L<MooseX::Getopt|MooseX::Getopt>, the
+command-line will be parsed with C<MooseX::Getopt>.  Any recognized
+args will be used to instantiate your class, and any extra args will
+be passed to C<run>.
+
+=head1 BUGS
+
+Many of the plugins shipped are unstable; they may go away, change,
+break, etc.  If there is no documentation for a plugin, it is probably
+just a prototype.
+
+=head1 REPOSITORY
+
+L<http://github.com/jrockway/moosex-runnable>
+
+=head1 AUTHOR
+
+Jonathan Rockway C<< <jrockway@cpan.org> >>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2009 Jonathan Rockway
+
+This module is Free Software, you can redistribute it under the same
+terms as Perl itself.

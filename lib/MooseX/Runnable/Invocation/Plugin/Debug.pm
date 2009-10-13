@@ -48,3 +48,20 @@ for my $method (qw{
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+MooseX::Runnable::Invocation::Plugin::Debug - print debugging information
+
+=head1 DESCRIPTION
+
+This is an example plugin, showing how you could write your own.  It
+prints a message for each stage of the "run" process.  It is also used
+by other plugins to determine whether or not to print debugging
+messages.
+
+=head1 SEE ALSO
+
+L<MooseX::Runnable>

@@ -78,3 +78,5 @@ L<MooseX::Runnable::Invocation|MooseX::Runnable::Invocation>.
 
 L<mx-run>, a script that will run MooseX::Runnable apps, saving you
 valuable seconds!
+
+L<MooseX::Runnable>

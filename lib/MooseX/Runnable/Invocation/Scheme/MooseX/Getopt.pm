@@ -35,3 +35,8 @@ consumed by MX::Getopt will be passed to the class's run method.
 
 (See the test C<t/basic-mx-getopt.t> for an example.)
 
+=head1 SEE ALSO
+
+L<MooseX::Runnable>
+
+L<MooseX::Getopt>
