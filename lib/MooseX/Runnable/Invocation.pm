@@ -2,6 +2,7 @@ package MooseX::Runnable::Invocation;
 use Moose;
 use MooseX::Types -declare => ['RunnableClass'];
 use MooseX::Types::Moose qw(Str HashRef ArrayRef);
+use List::MoreUtils qw(uniq);
 use namespace::autoclean;
 
 require Class::MOP;
@@ -100,11 +101,13 @@ sub apply_scheme {
     my ($self, $class) = @_;
 
     my @schemes = grep { defined } map {
-        $self->_convert_role_to_scheme($_)
-    } $class->calculate_all_roles;
+        eval { $self->_convert_role_to_scheme($_) }
+    } map {
+        eval { $_->meta->calculate_all_roles };
+    } $class->linearized_isa;
 
     eval {
-        foreach my $scheme (@schemes) {
+        foreach my $scheme (uniq @schemes) {
             $scheme->apply($self);
         }
     };

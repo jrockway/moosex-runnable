@@ -1,3 +1,7 @@
+0.02 Mon Nov  2 02:30:10 CST 2009
+        - fix bug where roles of superclasses were not considered when
+          applying invocation schemes.
+
 0.01 Tue Oct 13 02:04:03 CDT 2009
         - stable release, no major changes
 
