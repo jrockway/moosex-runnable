@@ -9,6 +9,7 @@ requires 'MooseX::Types' => '0.10';
 requires 'MooseX::Types::Path::Class';
 requires 'namespace::autoclean';
 requires 'List::MoreUtils';
+requires 'Params::Util';
 
 build_requires 'Test::More';
 build_requires 'ok';

@@ -3,6 +3,7 @@ use Moose;
 use MooseX::Types -declare => ['RunnableClass'];
 use MooseX::Types::Moose qw(Str HashRef ArrayRef);
 use List::MoreUtils qw(uniq);
+use Params::Util qw(_CLASS);
 use namespace::autoclean;
 
 require Class::MOP;
@@ -12,7 +13,7 @@ require Class::MOP;
 
 subtype RunnableClass,
   as Str,
-  where { $_ =~ /^[:A-Za-z_]+$/ };
+  where { _CLASS($_) };
 
 
 with 'MooseX::Runnable'; # this class technically follows

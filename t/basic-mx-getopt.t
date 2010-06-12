@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Test::Exception;
-use Test::More tests => 5;
+use Test::More tests => 9;
 
 use MooseX::Runnable::Invocation;
 use ok 'MooseX::Runnable::Invocation::Scheme::MooseX::Getopt';
@@ -25,17 +25,27 @@ my $foo;
   }
 }
 
-my $invocation = MooseX::Runnable::Invocation->new(
-    class => 'Class',
-);
+{ package Class2;
+  use Moose;
+  extends 'Class';
+}
 
-ok $invocation;
+foreach my $class (qw(Class Class2))
+{
+    my $invocation = MooseX::Runnable::Invocation->new(
+        class => $class,
+    );
 
-my $code;
-lives_ok {
-    $code = $invocation->run('--foo', '42', 0);
-} 'run lived';
+    ok $invocation, 'class is instantiatable';
 
-is $foo, '42', 'got foo from cmdline';
+    my $code;
+    lives_ok {
+        $code = $invocation->run('--foo', '42', 0);
+    } 'run lived';
 
-is $code, 0, 'exit status ok';
+    is $foo, '42', 'got foo from cmdline';
+
+    is $code, 0, 'exit status ok';
+}
+
+
