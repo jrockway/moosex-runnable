@@ -1,7 +1,7 @@
 package MooseX::Runnable;
 use Moose::Role;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 requires 'run';
 

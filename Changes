@@ -1,4 +1,4 @@
-0.02_01 Fri Jun 11 18:12:26 PDT 2010
+0.03 Sat Jun 26 23:19:41 CDT 2010
         - modified verification of RunnableClass values to use
           Params::Util::_CLASS (Karen Etheridge)
 
