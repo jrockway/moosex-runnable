@@ -1,7 +1,8 @@
 package MooseX::Runnable::Util::ArgParser;
 use Moose;
 use MooseX::Types::Moose qw(HashRef ArrayRef Str Bool);
-use MooseX::Types::Path::Class qw(Dir);
+use MooseX::Types::Path::Tiny qw(Path);
+use Path::Tiny; # exports path()
 use List::MoreUtils qw(first_index);
 
 use FindBin;
@@ -30,7 +31,7 @@ has 'modules' => (
 
 has 'include_paths' => (
     is         => 'ro',
-    isa        => ArrayRef[Dir],
+    isa        => ArrayRef[Path],
     lazy_build => 1,
     auto_deref => 1,
 );
@@ -119,7 +120,7 @@ sub _build_modules {
 sub _build_include_paths {
     my $self = shift;
     my @args = $self->argv;
-    return [ map { Path::Class::dir($_) } _look_for_dash_something 'I', @args ];
+    return [ map { path($_) } _look_for_dash_something 'I', @args ];
 }
 
 sub _build_is_help {
