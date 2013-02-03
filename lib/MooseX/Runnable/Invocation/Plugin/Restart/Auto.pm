@@ -2,7 +2,8 @@ package MooseX::Runnable::Invocation::Plugin::Restart::Auto;
 use Moose::Role;
 use MooseX::Types;
 use MooseX::Types::Moose qw(ArrayRef RegexpRef Any Str);
-use MooseX::Types::Path::Class qw(Dir);
+use MooseX::Types::Path::Tiny qw(Path);
+use Path::Tiny; # exports path()
 use File::ChangeNotify;
 use namespace::autoclean;
 
@@ -26,10 +27,10 @@ has 'watch_regexp' => (
 
 has 'watch_directories' => (
     is       => 'ro',
-    isa      => ArrayRef[Dir],
+    isa      => ArrayRef[Path],
     required => 1,
     coerce   => 1,
-    default  => sub { [Path::Class::dir('.')] },
+    default  => sub { [path('.')] },
 );
 
 has 'watcher' => (
@@ -66,7 +67,7 @@ sub _build_initargs_from_cmdline {
         }
     }
     my %result;
-    $result{watch_directories} = [map { Path::Class::dir($_) } @dirs] if @dirs;
+    $result{watch_directories} = [map { path($_) } @dirs] if @dirs;
     $result{watch_regexp} = $regexp if $regexp;
     return \%result;
 }
